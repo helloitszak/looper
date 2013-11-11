@@ -11,7 +11,11 @@ function createLoop(video, timeIn, timeOut) {
   video.volume = 1.0;
 
   if (location.hash.substr(1).toLowerCase() == "debug") {
-    enableDebug();
+    if (window.mozInnerScreenY === undefined) {
+      enableDebug();
+    } else { 
+      alert("Debugging not supported on Firefox. It likes to eat up CPU.");
+    }
   }
 
   var markers = [timeIn, timeOut];
@@ -37,12 +41,14 @@ function createLoop(video, timeIn, timeOut) {
     }
   };
 
-  var worker = new Worker("looper/worker.js");
+ var worker = new Worker("looper/worker.js");
   worker.onmessage = function(e) {
-    if (e.data == "tick") {
-      checkMarkers();
-    }
-  };
+   if (e.data == "tick") {
+     checkMarkers();
+   }
+ };
+ //worker.postMessage();
+
 
   video.play();
 };
