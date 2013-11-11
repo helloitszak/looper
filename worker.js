@@ -1,1 +1,1 @@
-setInterval(postMessage, 0, "tick");
+setInterval(postMessage, 10, "tick");
