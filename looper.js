@@ -2,6 +2,8 @@ function createLoop(video, timeIn, timeOut) {
   var debug;
   var enableDebug = function() {
     debug = document.getElementById("loopdebug");
+    console.log("DEBUGGING!");
+    debug.style.visibility = "visible";
     video.controls = true;
   };
 
@@ -14,7 +16,7 @@ function createLoop(video, timeIn, timeOut) {
 
   var markers = [timeIn, timeOut];
 
-  video.addEventListener("click", function() {
+  video.addEventListener("click", function(e) {
     e.preventDefault();
     video[video.paused ? "play" : "pause"]();
   }, false);
@@ -30,9 +32,12 @@ function createLoop(video, timeIn, timeOut) {
     if (debug) {
       debug.innerHTML = [video.currentTime, markers.join(","), video.src.split("/").splice(-1)[0], video.paused].join("<br/>");
     }
+    if (video.currentTime >= markers[1]) {
+      video.currentTime = markers[0];
+    }
   };
 
-  var worker = new Worker("./worker.js");
+  var worker = new Worker("looper/worker.js");
   worker.onmessage = function(e) {
     if (e.data == "tick") {
       checkMarkers();
